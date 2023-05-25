@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.BookMapper">
+	<select id="list" resultType="hashmap">
+		select *,format(price,"#,###")fmtPrice ,
+		(select count(*) from reviews where code=b.code) rcnt,
+		(select count(*) from favorite_books where code=b.code and uid=#{uid}) ucnt,
+		(select count(*) from favorite_books where code=b.code) fcnt
+		from books b where title like concat('%',#{query},'%') 
+		or author like concat('%',#{query},'%') 
+		order by code desc 
+		limit #{start},#{size}
+	</select>
+	<update id="update_viewcnt">
+		update books set viewcnt = viewcnt+1 where code=#{code}
+	</update>
+	<select id="read" resultType="hashmap">
+		select *,format(price,"#,###")fmtPrice ,
+		(select count(*) from reviews where code=b.code) rcnt,
+		(select count(*) from favorite_books where code=b.code and uid=#{uid}) ucnt,
+		(select count(*) from favorite_books where code=b.code) fcnt
+		from books b where code = #{code}
+	</select>
+	<insert id="favorite_insert">
+		insert into favorite_books(code,uid) values(#{code},#{writer})
+	</insert>
+	<delete id="favorite_delete">
+		delete from favorite_books where code=#{code} and uid=#{writer}
+	</delete>
+	<select id="total" resultType="int">
+		select count(*) from books 
+		where title like concat('%',#{query},'%') 
+		or author like concat('%',#{query},'%') 
+	</select>
+	<insert id="insert">
+		insert into books(title,price,author) values (#{title},#{price},#{author})
+	</insert>
+	<delete id="delete">
+	</delete>
+	<update id="update">
+	</update>
+</mapper>

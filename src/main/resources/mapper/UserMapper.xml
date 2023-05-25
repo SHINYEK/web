@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.UserMapper">
+	<insert id="insert">
+		insert into users(uid, upass, uname, address,phone,photo)
+		values(#{uid},#{upass},#{uname},#{address}, #{phone},#{photo})
+	</insert>
+	<select id="read" resultType="hashmap">
+		select *,date_format(join_date,"%Y-%m-%d %T") fmtDate
+		from users where uid=#{uid}
+	</select>
+	<update id="update">
+		update users set uname=#{uname}, upass=#{upass},
+		address=#{address}
+		, phone=#{phone}, photo=#{photo} where uid=#{uid}
+	</update>
+</mapper>

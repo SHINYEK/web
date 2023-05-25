@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.CommentMapper">
+	<select id="list" resultType="hashmap">
+		select *,date_format(date,'%Y-%m-%d %T') fmtDate,
+		(select count(*) from favorite_comments where c.id=id) fcnt,
+		(select count(*) from favorite_comments where c.id=id and uid=#{uid}) ucnt
+		from comments c where postid=#{postid}
+		order by id desc
+		limit #{start}, #{size}
+	</select>
+	<select id="total" resultType="int">
+		select count(*) from comments
+		where postid=#{postid}
+	</select>
+	<insert id="insert">
+		insert into comments(postid, body, writer)
+		values(#{postid},#{body},#{writer})
+	</insert>
+	<delete id="delete">
+		delete from comments where id = #{id}
+	</delete>
+	<update id="update">
+		update comments set body=#{body}, date=now() where
+		id=#{id}
+	</update>
+	<insert id="favorite_insert">
+		insert into favorite_comments(id, uid)
+		value(#{id},#{writer})
+	</insert>
+	
+	<delete id="favorite_delete">
+		delete from favorite_comments where id =#{id} and uid=#{writer}
+	</delete>
+</mapper>

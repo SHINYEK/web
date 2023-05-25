@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.ReviewMapper">
+	<select id="list" resultType="hashmap">
+		select *,date_format(date,'%Y-%m-%d %T') fmtDate,
+		(select count(*) from favorite_reviews where r.id=id) fcnt,
+		(select count(*) from favorite_reviews where r.id=id and uid=#{uid}) ucnt
+		from reviews r
+		where code = #{code}
+		order by id desc
+		limit #{start},#{size};
+	</select>
+	<select id="total" resultType="int">
+		select count(*) total from reviews
+		where code = #{code}
+	</select>
+	<insert id="insert">
+		insert into reviews(code,body,writer) values(#{code},#{body},#{writer})
+	</insert>
+	<update id="update">
+		update reviews set body = #{body}, date=now() where id=#{id}
+	</update>
+	<delete id="delete">
+		delete from reviews where id = #{id} 
+	</delete>
+	<insert id="finsert">
+		insert into favorite_reviews(id,uid) values(#{id},#{writer})
+	</insert>
+	<delete id="fdelete">
+		delete from favorite_reviews where id=#{id} and uid=#{writer}
+	</delete>
+</mapper>

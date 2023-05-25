@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.PostMapper">
+	<select id="list" resultType="hashmap">
+		select *,
+		date_format(date,'%Y-%m-%d %T') fmtDate,
+		(select count(*) from comments where postid=p.id) ccnt
+		from posts p order by id desc 
+		limit #{start}, #{size}
+	</select>
+	<select id="read" resultType="hashmap">
+		select *, (select count(*) from comments where postid=p.id) ccnt 
+		from posts p where id = #{id}
+	</select>
+	
+	<select id="total" resultType="int">
+		select count(*) total from posts;
+	</select>
+	
+	<insert id="insert">
+		insert into posts(title,body,writer) values(#{title},#{body},#{writer})		
+	</insert>
+	<update id="update">
+		update posts set title=#{title}, body=#{body}, date=now() where id=#{id}
+	</update>
+	<delete id="delete">
+		delete from posts where id=#{id}
+	</delete>
+	
+	<update id="update_viewcnt">
+		update posts set viewcnt = viewcnt+1 where id = #{id}
+	</update>
+</mapper>
